@@ -1,406 +1,387 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Python Web Compiler by Shashwat</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyWeb - Python Playground</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #6C63FF;
-            --card-bg: #232345;
-            --card-bg-light: #2d2d5a;
-            --text-main: #fff;
-            --text-secondary: #b3b3d1;
-            --accent: #6C63FF;
-            --shadow: 0 6px 32px rgba(44, 44, 84, 0.25);
-            --radius: 18px;
-            --button-bg: #6C63FF;
-            --button-hover: #554ee0;
-            --error: #ff4d6d;
-            --success: #34C759;
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-secondary: #666666;
+            --accent: #2563eb;
+            --border: #e5e7eb;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --radius: 8px;
+            --button-bg: #2563eb;
+            --button-hover: #1d4ed8;
+            --error: #dc2626;
+            --success: #16a34a;
         }
-        html, body {
-            height: 100%;
-        }
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #6C63FF 0%, #232345 100%);
-            font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
-            color: var(--text-main);
+
+        * {
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            box-sizing: border-box;
         }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin: 40px 0 24px 0;
-            user-select: none;
-            animation: logoFadeIn 1.2s cubic-bezier(.4,0,.2,1);
-        }
-        .logo svg {
-            width: 48px;
-            height: 48px;
-            display: block;
-        }
-        .logo-text {
-            font-size: 2.1rem;
-            font-weight: 700;
-            letter-spacing: 1px;
+
+        body { 
+            background: var(--bg-color);
+            font-family: 'Inter', sans-serif;
             color: var(--text-main);
+            line-height: 1.5;
+            padding: 20px;
         }
-        .logo-tagline {
-            color: var(--text-secondary);
-            font-size: 1.1em;
-            margin-top: 2px;
+
+        .header {
             text-align: center;
-            letter-spacing: 0.5px;
-            font-weight: 400;
-            animation: logoFadeIn 1.5s 0.2s both;
+            margin-bottom: 24px;
         }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
         .container {
-            display: flex;
-            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
             width: 100%;
-            max-width: 1100px;
-            justify-content: center;
         }
+
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
-            box-shadow: 0 8px 32px rgba(44,44,84,0.25), 0 1.5px 8px 0 rgba(108,99,255,0.08);
-            display: flex;
-            flex-direction: column;
-            flex: 1 1 0;
-            min-width: 320px;
-            max-width: 600px;
-            min-height: 480px;
-            margin-bottom: 24px;
-            position: relative;
-            transition: box-shadow 0.25s, transform 0.18s;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            width: 100%;
         }
-        .card:hover {
-            box-shadow: 0 16px 48px rgba(44,44,84,0.32), 0 2px 12px 0 rgba(108,99,255,0.13);
-            transform: translateY(-2px) scale(1.012);
-        }
+
         .card-header {
-            background: var(--card-bg-light);
-            border-top-left-radius: var(--radius);
-            border-top-right-radius: var(--radius);
-            padding: 18px 0 14px 0;
-            text-align: center;
-            font-size: 1.18rem;
-            font-weight: 700;
-            letter-spacing: 1px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 500;
             color: var(--text-main);
         }
+
         .card-content {
-            flex: 1;
-            padding: 24px 24px 64px 24px;
-            display: flex;
-            flex-direction: column;
-            font-size: 1.07em;
-            line-height: 1.7;
+            padding: 16px;
         }
-        .card-footer {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            left: 0;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            padding: 0 24px 18px 24px;
-            gap: 12px;
-            background: transparent;
-        }
-        .card-footer .footer-left {
-            margin-right: auto;
-            color: var(--text-secondary);
-            font-size: 0.95em;
-        }
-        .editor-actions button, .card-footer button {
-            background: var(--button-bg);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 18px;
-            font-size: 1em;
-            font-weight: 500;
-            margin-left: 8px;
-            cursor: pointer;
-            transition: background 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 8px rgba(44,44,84,0.08);
-            position: relative;
-            overflow: hidden;
-        }
-        .editor-actions button:hover, .card-footer button:hover {
-            background: var(--button-hover);
-        }
-        .editor-actions button:active, .card-footer button:active {
-            filter: brightness(0.93);
-        }
-        .editor-actions button[aria-label], .card-footer button[aria-label] {
-            position: relative;
-        }
-        .editor-actions button[aria-label]:hover::after, .card-footer button[aria-label]:hover::after {
-            content: attr(aria-label);
-            position: absolute;
-            bottom: 120%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #232345;
-            color: #fff;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.95em;
-            white-space: nowrap;
-            opacity: 0.95;
-            pointer-events: none;
-            z-index: 10;
-            box-shadow: 0 2px 8px rgba(44,44,84,0.18);
-        }
+
         .editor-actions {
             display: flex;
-            justify-content: flex-end;
             gap: 8px;
-            margin-top: 12px;
+            margin-bottom: 12px;
         }
-        .CodeMirror {
-            height: 340px;
-            background: var(--card-bg-light);
-            color: var(--text-main);
-            border-radius: 10px;
-            font-size: 1.05em;
-            border: none;
-        }
-        #output {
-            background: var(--card-bg-light);
-            color: var(--text-main);
-            border-radius: 10px;
-            min-height: 340px;
-            font-family: 'Fira Mono', 'SF Mono', 'Menlo', 'Monaco', monospace;
-            font-size: 1.05em;
-            padding: 18px;
-            margin-bottom: 0;
-            white-space: pre-wrap;
-            overflow-x: auto;
-            position: relative;
-        }
-        .error-message {
-            background: rgba(255,77,109,0.12);
-            color: var(--error);
-            border-left: 4px solid var(--error);
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 12px 0;
-            font-size: 1em;
-        }
-        .success-message {
-            background: rgba(52,199,89,0.12);
-            color: var(--success);
-            border-left: 4px solid var(--success);
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 12px 0;
-            font-size: 1em;
-        }
-        .copy-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
+
+        .editor-actions button {
             background: var(--button-bg);
-            color: #fff;
+            color: white;
             border: none;
-            border-radius: 8px;
-            padding: 6px 14px;
-            font-size: 0.98em;
+            border-radius: var(--radius);
+            padding: 8px 16px;
+            font-size: 14px;
             cursor: pointer;
             transition: background 0.2s;
-            z-index: 2;
-            opacity: 0.85;
+            white-space: nowrap;
         }
-        .copy-btn:hover { background: var(--button-hover); opacity: 1; }
-        .loading {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(255,255,255,0.18);
-            border-radius: 50%;
-            border-top: 3px solid var(--button-bg);
-            animation: spin 1s linear infinite;
+
+        #getFixBtn {
+            display: none;
+            font-size: 14px;
+            padding: 8px 16px;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        .CodeMirror {
+            height: 300px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
         }
-        @media (max-width: 900px) {
-            .container {
-                flex-direction: column;
-                gap: 0;
-                align-items: stretch;
-            }
-            .card {
-                max-width: 100vw;
-                min-width: 0;
-            }
+
+        #output {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            min-height: 200px;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            overflow-x: auto;
         }
-        @media (max-width: 600px) {
-            .logo {
-                margin: 24px 0 12px 0;
-            }
-            .container {
-                padding: 0 0px;
-            }
-            .card {
-                min-width: 0;
-                margin-bottom: 18px;
-                min-height: 340px;
-            }
-            .card-content {
-                padding: 16px 8px 56px 8px;
-            }
-            .card-footer {
-                padding: 0 8px 12px 8px;
-            }
-            .card-header {
-                font-size: 1em;
-                padding: 12px 0 10px 0;
-            }
-            #aiChatBtn { width: 60px; height: 60px; font-size: 26px; }
+
+        .copy-btn {
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 8px;
         }
-        .ai-modal, .chat-modal {
+
+        .copy-btn:hover {
+            background: var(--button-hover);
+        }
+
+        /* Modal Styles */
+        .modal {
             display: none;
             position: fixed;
-            z-index: 2000;
-            left: 0; top: 0; width: 100vw; height: 100vh;
-            background: rgba(44,44,84,0.7);
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(6px);
-            transition: opacity 0.3s;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
         }
-        .ai-modal.active, .chat-modal.active { opacity: 1; display: flex; }
-        .ai-modal-content, .chat-modal-content {
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
             background: var(--card-bg);
-            border-radius: 18px;
-            padding: 32px 24px 24px 24px;
-            min-width: 340px;
-            max-width: 95vw;
+            border-radius: var(--radius);
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: 0 8px 32px rgba(44,44,84,0.3);
-            position: relative;
-            color: #fff;
+            margin: 0 auto;
         }
+
         .close-modal {
-            position: absolute;
-            top: 16px; right: 16px;
-            font-size: 24px;
-            color: #b3b3d1;
+            float: right;
             cursor: pointer;
+            font-size: 20px;
+            color: var(--text-secondary);
+        }
+
+        /* Chat Button */
+        #aiChatBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--button-bg);
+            color: white;
+            border: none;
             border-radius: 50%;
-            width: 32px; height: 32px;
-            display: flex; align-items: center; justify-content: center;
-            transition: background 0.2s, color 0.2s;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
         }
-        .close-modal:hover { background: rgba(255,255,255,0.08); color: var(--error); }
-        .error-analysis { background: var(--card-bg-light); border-radius: 12px; padding: 18px; margin: 18px 0; }
-        .error-section { margin-bottom: 18px; }
-        .error-section:last-child { margin-bottom: 0; }
-        .error-section h4 { margin-bottom: 10px; }
-        #aiFixedCode { background: #18183a; color: #fff; border-radius: 8px; padding: 16px; font-family: 'Fira Mono', 'SF Mono', 'Menlo', 'Monaco', monospace; font-size: 1em; }
-        .chat-history { max-height: 320px; overflow-y: auto; margin-bottom: 15px; background: var(--card-bg-light); border-radius: 10px; padding: 15px; }
-        .chat-message { margin-bottom: 12px; padding: 10px; border-radius: 8px; max-width: 80%; }
-        .chat-message.user { background: var(--button-bg); color: #fff; margin-left: auto; }
-        .chat-message.ai { background: var(--card-bg); color: #fff; margin-right: auto; }
-        @media (max-width: 600px) {
-            .ai-modal-content, .chat-modal-content { min-width: 90vw; padding: 16px 6px 16px 6px; }
-            #aiChatBtn { bottom: 16px; right: 16px; width: 48px; height: 48px; font-size: 20px; }
+
+        #aiChatBtn:hover {
+            background: var(--button-hover);
         }
-        @keyframes logoFadeIn {
-            from { opacity: 0; transform: translateY(-30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .card {
+                margin-bottom: 0;
+                width: 100%;
+                max-width: 400px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .CodeMirror {
+                height: 200px;
+            }
+
+            #output {
+                min-height: 150px;
+            }
+
+            .editor-actions {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .editor-actions button {
+                width: 100%;
+                max-width: 100%;
+                font-size: 15px;
+                padding: 7px 0;
+                border-radius: 6px;
+                margin: 0;
+                min-height: 38px;
+            }
+
+            #getFixBtn {
+                font-size: 15px;
+                padding: 7px 0;
+                width: 100%;
+                border-radius: 6px;
+                min-height: 38px;
+                max-width: 100%;
+            }
+
+            .modal-content {
+                width: 90%;
+                max-width: 90%;
+                margin: 0 auto;
+                padding: 16px;
+            }
+
+            .error-section h4 {
+                font-size: 15px;
+            }
+
+            #aiExplanation {
+                font-size: 13px;
+                padding: 10px;
+            }
+
+            #aiFixedCode {
+                font-size: 13px;
+                padding: 12px;
+            }
+
+            #aiChatBtn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+                bottom: 12px;
+                right: 12px;
+            }
+        }
+
+        /* Fix Modal Styles */
+        .error-section {
+            margin-bottom: 20px;
+        }
+
+        .error-section h4 {
+            color: var(--text-main);
+            font-size: 16px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        #aiExplanation {
+            background: #f8f9fa;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        #aiFixedCode {
+            background: #1e1e1e;
+            color: #fff;
+            border-radius: var(--radius);
+            padding: 16px;
+            font-family: 'Fira Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            white-space: pre;
+            margin-bottom: 16px;
         }
     </style>
 </head>
 <body>
-    <div class="logo">
-        <!-- Simple SVG logo: Pythonic P in a circle -->
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="24" cy="24" r="24" fill="#fff"/>
-            <path d="M16 34V14h10.5c4.5 0 7.5 2.2 7.5 6.1 0 3.2-2.2 5.1-5.2 5.6v.2c3.5.4 5.7 2.3 5.7 5.7 0 4.2-3.3 6.4-8.2 6.4H16zm6.7-13.2h-4.2v5.1h4.2c2.2 0 3.5-.8 3.5-2.5 0-1.7-1.3-2.6-3.5-2.6zm.3 7.2h-4.5v5.6h4.5c2.7 0 4.1-.9 4.1-2.8 0-1.8-1.4-2.8-4.1-2.8z" fill="#6C63FF"/>
-        </svg>
-        <span class="logo-text">PyWeb</span>
+    <div class="header">
+        <div class="logo">PyWeb</div>
+        <div class="tagline">Python Playground</div>
     </div>
-    <div class="logo-tagline">AI-powered Python playground</div>
+
     <div class="container">
         <div class="card">
-            <div class="card-header">Script</div>
+            <div class="card-header">Code Editor</div>
             <div class="card-content">
-                <textarea id="code">print("Hello, World!")</textarea>
                 <div class="editor-actions">
-                    <button onclick="executeCode()"><i class="fas fa-play"></i> Run</button>
+                    <button onclick="executeCode()" ><i class="fas fa-play"></i> Run</button>
                     <button id="getFixBtn" onclick="openAIModal()" style="display: none;"><i class="fas fa-magic"></i> Fix</button>
                 </div>
-            </div>
-            <div class="card-footer">
-                <span class="footer-left"></span>
-                <button onclick="editor.setValue('');"><i class="fas fa-eraser"></i> Clear</button>
+                <textarea id="code">print("Hello, World!")</textarea>
             </div>
         </div>
+
         <div class="card">
             <div class="card-header">Output</div>
             <div class="card-content">
                 <div id="output"></div>
-            </div>
-            <div class="card-footer">
-                <span class="footer-left">2024 &copy; Shashwat</span>
+                <button class="copy-btn" onclick="copyOutput()">Copy Output</button>
             </div>
         </div>
     </div>
-    <!-- AI Error Fix Modal -->
-    <div id="aiModal" class="ai-modal">
-        <div class="ai-modal-content">
+
+    <!-- AI Fix Modal -->
+    <div id="aiModal" class="modal">
+        <div class="modal-content">
             <span class="close-modal" onclick="closeAIModal()">&times;</span>
-            <h3 style="color:#fff;"><i class="fas fa-exclamation-circle"></i> Error Analysis</h3>
-            <div class="error-analysis">
-                <div class="error-section">
-                    <h4 style="color:#fff;"><i class="fas fa-info-circle"></i> What's Wrong?</h4>
-                    <div id="aiExplanation" class="error-message"></div>
-                </div>
-                <div class="error-section">
-                    <h4 style="color:#fff;"><i class="fas fa-code"></i> Suggested Fix</h4>
-                    <pre id="aiFixedCode"></pre>
-                </div>
+            <h3>Error Analysis</h3>
+            <div class="error-section">
+                <h4>What's Wrong?</h4>
+                <div id="aiExplanation"></div>
             </div>
-            <button onclick="applyFix()" style="background:var(--button-bg);color:#fff;"><i class="fas fa-check"></i> Apply Fix</button>
+            <div class="error-section">
+                <h4>Suggested Fix</h4>
+                <pre id="aiFixedCode"></pre>
+            </div>
+            <button onclick="applyFix()" class="editor-actions button">Apply Fix</button>
         </div>
     </div>
-    <!-- AI Chat Floating Button -->
-    <button id="aiChatBtn" title="AI Chat" style="position:fixed;bottom:32px;right:32px;z-index:1100;background:var(--button-bg);color:#fff;border:none;border-radius:50%;width:60px;height:60px;font-size:24px;box-shadow:0 4px 16px rgba(44,44,84,0.2), 0 0 0 0 rgba(108,99,255,0.18);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:box-shadow 0.2s, transform 0.2s;">
+
+    <!-- AI Chat Button -->
+    <button id="aiChatBtn" title="AI Chat">
         <i class="fas fa-comments"></i>
     </button>
+
     <!-- AI Chat Modal -->
-    <div id="chatModal" class="chat-modal">
-        <div class="chat-modal-content">
+    <div id="chatModal" class="modal">
+        <div class="modal-content">
             <span class="close-modal" onclick="closeChatModal()">&times;</span>
-            <h2 style="color:#fff;"><i class="fas fa-robot"></i> AI Chat Assistant</h2>
-            <div class="chat-history" id="chatHistory" style="background:var(--card-bg-light);color:#fff;"></div>
-            <form id="chatForm" class="chat-form" onsubmit="sendChat(event)">
-                <div class="chat-input-container" style="display:flex;gap:10px;margin-top:15px;">
-                    <input type="text" id="chatInput" placeholder="Ask me anything about Python..." required style="flex:1;padding:12px;border-radius:8px;border:none;font-size:15px;background:var(--card-bg);color:#fff;" />
-                    <button type="submit" style="background:var(--button-bg);color:#fff;padding:12px 20px;border-radius:8px;border:none;font-size:15px;cursor:pointer;"><i class="fas fa-paper-plane"></i> Send</button>
+            <h3>AI Chat Assistant</h3>
+            <div id="chatHistory"></div>
+            <form id="chatForm" onsubmit="sendChat(event)">
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <input type="text" id="chatInput" placeholder="Ask about Python..." required 
+                           style="flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius);">
+                    <button type="submit" class="editor-actions button">Send</button>
                 </div>
             </form>
         </div>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
     <script>
@@ -424,16 +405,14 @@
             const outputDiv = document.getElementById('output');
             const getFixBtn = document.getElementById('getFixBtn');
             
-            outputDiv.innerHTML = '<div class="loading"></div> Executing...';
+            outputDiv.textContent = 'Executing...';
             getFixBtn.style.display = 'none';
             lastError = null;
             lastCode = code;
 
             fetch('/execute', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ code: code })
             })
             .then(response => response.json())
@@ -443,65 +422,57 @@
                 if (data.error) {
                     output += '\nError:\n' + data.error;
                     lastError = data.error;
-                    getFixBtn.style.display = 'inline-flex';
+                    getFixBtn.style.display = 'inline-block';
                 }
-                outputDiv.innerHTML = output || 'No output';
-                setTimeout(addCopyButton, 400);
+                outputDiv.textContent = output || 'No output';
             })
             .catch(error => {
-                outputDiv.innerHTML = 'Error: ' + error.message;
+                outputDiv.textContent = 'Error: ' + error.message;
             });
         }
 
-        // AI Error Fix Modal Logic
+        function copyOutput() {
+            const output = document.getElementById('output').textContent;
+            navigator.clipboard.writeText(output);
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = 'Copy Output', 1000);
+        }
+
+        // Modal Functions
         function openAIModal() {
             if (!lastError) return;
             const modal = document.getElementById('aiModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('active'), 10);
+            modal.classList.add('active');
             
-            document.getElementById('aiExplanation').innerHTML = '<div class="loading"></div> Analyzing error...';
-            document.getElementById('aiFixedCode').innerHTML = '';
-            
+            document.getElementById('aiExplanation').textContent = 'Analyzing error...';
+            document.getElementById('aiFixedCode').textContent = '';
+
             fetch('/get_fix', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    code: lastCode,
-                    error: lastError
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: lastCode, error: lastError })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    document.getElementById('aiExplanation').innerHTML = 'Error: ' + data.error;
+                    document.getElementById('aiExplanation').textContent = 'Error: ' + data.error;
                     return;
                 }
-                // Format the reason with proper line breaks and styling
-                const formattedReason = data.reason
-                    .split('\n')
-                    .map(line => line.trim())
-                    .filter(line => line)
-                    .join('<br>');
-                document.getElementById('aiExplanation').innerHTML = formattedReason;
-                const formattedCode = data.fixed_code.replace(/```python\n?|\n?```/g, '');
-                document.getElementById('aiFixedCode').innerHTML = formattedCode;
+                document.getElementById('aiExplanation').textContent = data.reason;
+                document.getElementById('aiFixedCode').textContent = data.fixed_code;
             })
             .catch(error => {
-                document.getElementById('aiExplanation').innerHTML = 'Error: ' + error.message;
+                document.getElementById('aiExplanation').textContent = 'Error: ' + error.message;
             });
         }
 
         function closeAIModal() {
-            const modal = document.getElementById('aiModal');
-            modal.classList.remove('active');
-            setTimeout(() => modal.style.display = 'none', 300);
+            document.getElementById('aiModal').classList.remove('active');
         }
 
         function applyFix() {
-            const fixedCode = document.getElementById('aiFixedCode').innerText;
+            const fixedCode = document.getElementById('aiFixedCode').textContent;
             if (fixedCode) {
                 editor.setValue(fixedCode);
                 closeAIModal();
@@ -509,32 +480,78 @@
             }
         }
 
-        // AI Chat Modal Logic
+        // Chat Functions
         const aiChatBtn = document.getElementById('aiChatBtn');
         const chatModal = document.getElementById('chatModal');
         const chatHistory = document.getElementById('chatHistory');
         const chatInput = document.getElementById('chatInput');
 
         aiChatBtn.onclick = function() {
-            chatModal.style.display = 'flex';
-            setTimeout(() => chatModal.classList.add('active'), 10);
+            chatModal.classList.add('active');
             chatInput.focus();
         };
 
         function closeChatModal() {
             chatModal.classList.remove('active');
-            setTimeout(() => chatModal.style.display = 'none', 300);
         }
 
         function appendChatMessage(sender, text) {
             const msgDiv = document.createElement('div');
-            msgDiv.className = 'chat-message ' + sender;
-            
-            // Format code blocks in the message
-            const formattedText = text.replace(/```python\n([\s\S]*?)\n```/g, 
-                '<pre><code>$1</code></pre>');
-            
-            msgDiv.innerHTML = formattedText;
+            msgDiv.style.marginBottom = '8px';
+            msgDiv.style.padding = '8px';
+            msgDiv.style.borderRadius = '4px';
+            msgDiv.style.backgroundColor = sender === 'user' ? '#e5e7eb' : '#f3f4f6';
+            msgDiv.style.wordBreak = 'break-word';
+            msgDiv.style.overflowWrap = 'anywhere';
+            msgDiv.style.maxWidth = '100%';
+            if (sender === 'ai') {
+                let html = text;
+                // Handle markdown code blocks (```python ... ``` or ``` ... ```)
+                html = html.replace(/```[a-zA-Z0-9]*\n?([\s\S]*?)```/g, function(match, code) {
+                    let codeLines = code.split('\n');
+                    if (codeLines[0].trim().match(/^[a-zA-Z0-9]+$/)) {
+                        codeLines.shift();
+                    }
+                    code = codeLines.join('\n');
+                    const codeId = 'ai-code-' + Math.random().toString(36).substr(2, 9);
+                    return `<div style=\"position:relative;margin:8px 0;max-width:100%;overflow-x:auto;\">
+                        <pre style=\"background:#1e1e1e;color:#fff;padding:12px 8px 12px 12px;border-radius:6px;overflow-x:auto;font-size:13px;max-width:100%;white-space:pre-wrap;word-break:break-word;\"><code id='${codeId}'>${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
+                        <button class='copy-chat-code-btn' data-code=\"${encodeURIComponent(code)}\" style=\"position:absolute;top:8px;right:8px;padding:2px 10px;font-size:12px;border-radius:4px;border:none;background:#2563eb;color:#fff;cursor:pointer;\">Copy</button>
+                    </div>`;
+                });
+                // Handle <pre><code>...</code></pre> blocks (HTML)
+                html = html.replace(/<pre><code>([\s\S]*?)<\/code><\/pre>/g, function(match, code) {
+                    let codeLines = code.split('\n');
+                    if (codeLines[0].trim().match(/^[a-zA-Z0-9]+$/)) {
+                        codeLines.shift();
+                    }
+                    code = codeLines.join('\n');
+                    const codeId = 'ai-code-' + Math.random().toString(36).substr(2, 9);
+                    return `<div style=\"position:relative;margin:8px 0;max-width:100%;overflow-x:auto;\">
+                        <pre style=\"background:#1e1e1e;color:#fff;padding:12px 8px 12px 12px;border-radius:6px;overflow-x:auto;font-size:13px;max-width:100%;white-space:pre-wrap;word-break:break-word;\"><code id='${codeId}'>${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
+                        <button class='copy-chat-code-btn' data-code=\"${encodeURIComponent(code)}\" style=\"position:absolute;top:8px;right:8px;padding:2px 10px;font-size:12px;border-radius:4px;border:none;background:#2563eb;color:#fff;cursor:pointer;\">Copy</button>
+                    </div>`;
+                });
+                msgDiv.innerHTML = html;
+                // Attach event listeners to all copy buttons in this message
+                msgDiv.querySelectorAll('.copy-chat-code-btn').forEach(btn => {
+                    btn.onclick = function() {
+                        const textToCopy = decodeURIComponent(this.dataset.code);
+                        navigator.clipboard.writeText(textToCopy)
+                          .then(() => {
+                            this.innerText = 'Copied!';
+                            setTimeout(() => this.innerText = 'Copy', 1000);
+                          })
+                          .catch(err => {
+                            this.innerText = 'Failed';
+                            setTimeout(() => this.innerText = 'Copy', 1000);
+                            console.error('Failed to copy text: ', err);
+                          });
+                    };
+                });
+            } else {
+                msgDiv.textContent = text;
+            }
             chatHistory.appendChild(msgDiv);
             chatHistory.scrollTop = chatHistory.scrollHeight;
         }
@@ -546,12 +563,6 @@
 
             appendChatMessage('user', msg);
             chatInput.value = '';
-            
-            // Add loading indicator
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'chat-message ai';
-            loadingDiv.innerHTML = '<div class="loading"></div>';
-            chatHistory.appendChild(loadingDiv);
 
             fetch('/ai_chat', {
                 method: 'POST',
@@ -560,9 +571,6 @@
             })
             .then(res => res.json())
             .then(data => {
-                // Remove loading indicator
-                chatHistory.removeChild(loadingDiv);
-                
                 if (data.error) {
                     appendChatMessage('ai', 'Error: ' + data.error);
                 } else {
@@ -570,13 +578,11 @@
                 }
             })
             .catch(err => {
-                // Remove loading indicator
-                chatHistory.removeChild(loadingDiv);
                 appendChatMessage('ai', 'Error: ' + err.message);
             });
         }
 
-        // Close modals on outside click
+        // Close modals when clicking outside
         window.onclick = function(event) {
             if (event.target === document.getElementById('aiModal')) closeAIModal();
             if (event.target === chatModal) closeChatModal();
@@ -588,30 +594,6 @@
                 e.preventDefault();
                 document.getElementById('chatForm').dispatchEvent(new Event('submit'));
             }
-        });
-
-        function addCopyButton() {
-            const outputDiv = document.getElementById('output');
-            if (!document.getElementById('copyOutputBtn')) {
-                const btn = document.createElement('button');
-                btn.className = 'copy-btn';
-                btn.id = 'copyOutputBtn';
-                btn.innerText = 'Copy Output';
-                btn.onclick = function() {
-                    const text = outputDiv.innerText;
-                    navigator.clipboard.writeText(text);
-                    btn.innerText = 'Copied!';
-                    setTimeout(()=>{btn.innerText='Copy Output';}, 1200);
-                };
-                outputDiv.parentElement.appendChild(btn);
-            }
-        }
-
-        // Add tooltips to main action buttons
-        window.addEventListener('DOMContentLoaded', ()=>{
-            document.querySelector('button[onclick*="executeCode"]').setAttribute('aria-label','Run your code');
-            document.getElementById('getFixBtn').setAttribute('aria-label','AI Fix for errors');
-            document.querySelector('button[onclick*="editor.setValue"]').setAttribute('aria-label','Clear the editor');
         });
     </script>
 </body>
