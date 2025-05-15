@@ -8,6 +8,7 @@ import pkg_resources
 import threading
 import time
 from datetime import datetime
+import re
 
 app = Flask(__name__)
 
@@ -76,39 +77,42 @@ def get_fix():
         return jsonify({'error': 'Code and error message are required'}), 400
     
     try:
-        prompt = f"""As a Python expert, analyze this code and error message, then provide:\n1. A brief explanation of the error\n2. The corrected code\n\nCode:\n{code}\n\nError:\n{error}\n\nPlease format your response as:\nEXPLANATION:\n[Your explanation here]\n\nFIXED_CODE:\n[Your corrected code here]"""
+        prompt = f"""You are a Python expert. Analyze the following code and error message, then provide:
+1. A detailed explanation of why the error occurred, including:
+   - The specific issue in the code
+   - Why Python is raising this error
+   - What the error means in simple terms
+2. The corrected code (in a markdown Python code block).
 
-        headers = {
-            'Content-Type': 'application/json',
-        }
-        
-        data = {
-            'contents': [{
-                'parts': [{
-                    'text': prompt
-                }]
-            }]
-        }
-        
-        response = requests.post(
-            f'{GEMINI_API_URL}?key={GEMINI_API_KEY}',
-            headers=headers,
-            json=data
-        )
-        
+Code:
+{code}
+
+Error:
+{error}
+
+Format your response as:
+REASON:
+[detailed explanation here]
+
+CORRECTED_CODE:
+```python
+[fixed code here]
+```
+"""
+        headers = {'Content-Type': 'application/json'}
+        data = {'contents': [{'parts': [{'text': prompt}]}]}
+        response = requests.post(f'{GEMINI_API_URL}?key={GEMINI_API_KEY}', headers=headers, json=data)
         if response.status_code != 200:
             return jsonify({'error': f'API request failed: {response.text}'}), 500
-            
         response_data = response.json()
         response_text = response_data['candidates'][0]['content']['parts'][0]['text']
-        
-        # Parse the response to separate explanation and fixed code
-        parts = response_text.split('FIXED_CODE:')
-        explanation = parts[0].replace('EXPLANATION:', '').strip()
-        fixed_code = parts[1].strip() if len(parts) > 1 else ''
-        
+        # Extract reason and code
+        reason_match = re.search(r'REASON:\s*(.*?)\n+CORRECTED_CODE:', response_text, re.DOTALL)
+        code_match = re.search(r'CORRECTED_CODE:\s*```python\n([\s\S]*?)\n```', response_text)
+        reason = reason_match.group(1).strip() if reason_match else ''
+        fixed_code = code_match.group(1).strip() if code_match else ''
         return jsonify({
-            'explanation': explanation,
+            'reason': reason,
             'fixed_code': fixed_code
         })
     except Exception as e:
@@ -120,25 +124,17 @@ def ai_chat():
     if not user_message:
         return jsonify({'error': 'No message provided'}), 400
     try:
-        headers = {
-            'Content-Type': 'application/json',
-        }
-        data = {
-            'contents': [{
-                'parts': [{
-                    'text': user_message
-                }]
-            }]
-        }
-        response = requests.post(
-            f'{GEMINI_API_URL}?key={GEMINI_API_KEY}',
-            headers=headers,
-            json=data
-        )
+        prompt = f"You are a helpful Python assistant. Respond clearly and concisely. Format any code in markdown Python code blocks.\n\nUser: {user_message}"
+        headers = {'Content-Type': 'application/json'}
+        data = {'contents': [{'parts': [{'text': prompt}]}]}
+        response = requests.post(f'{GEMINI_API_URL}?key={GEMINI_API_KEY}', headers=headers, json=data)
         if response.status_code != 200:
             return jsonify({'error': f'API request failed: {response.text}'}), 500
         response_data = response.json()
         ai_reply = response_data['candidates'][0]['content']['parts'][0]['text']
+        # Ensure code blocks are formatted as markdown
+        ai_reply = re.sub(r'```python\n([\s\S]*?)\n```', r'<pre><code>python\n\1\n</code></pre>', ai_reply)
+        ai_reply = ai_reply.replace('\u007fpython', 'python')
         return jsonify({'reply': ai_reply})
     except Exception as e:
         return jsonify({'error': str(e)}), 500

@@ -6,467 +6,401 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2196F3;
-            --secondary-color: #1976D2;
-            --success-color: #4CAF50;
-            --error-color: #f44336;
-            --background-color: #f5f5f5;
-            --card-background: #ffffff;
-            --text-color: #333333;
-            --border-radius: 8px;
-            --shadow: 0 2px 4px rgba(0,0,0,0.1);
-            --gradient: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            --bg-main: #6C63FF;
+            --card-bg: #232345;
+            --card-bg-light: #2d2d5a;
+            --text-main: #fff;
+            --text-secondary: #b3b3d1;
+            --accent: #6C63FF;
+            --shadow: 0 6px 32px rgba(44, 44, 84, 0.25);
+            --radius: 18px;
+            --button-bg: #6C63FF;
+            --button-hover: #554ee0;
+            --error: #ff4d6d;
+            --success: #34C759;
         }
-
-        body { 
-            padding: 20px; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
-            max-width: 1200px;
-            margin: 0 auto;
-            color: var(--text-color);
+        html, body {
+            height: 100%;
         }
-
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6C63FF 0%, #232345 100%);
+            font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 40px 0 24px 0;
+            user-select: none;
+            animation: logoFadeIn 1.2s cubic-bezier(.4,0,.2,1);
+        }
+        .logo svg {
+            width: 48px;
+            height: 48px;
+            display: block;
+        }
+        .logo-text {
+            font-size: 2.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-main);
+        }
+        .logo-tagline {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+            margin-top: 2px;
+            text-align: center;
+            letter-spacing: 0.5px;
+            font-weight: 400;
+            animation: logoFadeIn 1.5s 0.2s both;
+        }
         .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            display: flex;
+            gap: 32px;
+            width: 100%;
+            max-width: 1100px;
+            justify-content: center;
         }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-            .header {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .button-group {
-                width: 100%;
-                justify-content: center;
-            }
-            .ai-modal-content, .chat-modal-content {
-                min-width: 90vw;
-                margin: 10px;
-            }
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(44,44,84,0.25), 0 1.5px 8px 0 rgba(108,99,255,0.08);
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 0;
+            min-width: 320px;
+            max-width: 600px;
+            min-height: 480px;
+            margin-bottom: 24px;
+            position: relative;
+            transition: box-shadow 0.25s, transform 0.18s;
         }
-
-        .editor-container, .output-container {
-            background: var(--card-background);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
+        .card:hover {
+            box-shadow: 0 16px 48px rgba(44,44,84,0.32), 0 2px 12px 0 rgba(108,99,255,0.13);
+            transform: translateY(-2px) scale(1.012);
         }
-
-        .CodeMirror {
-            height: 400px;
-            border: 1px solid #ddd;
-            font-size: 14px;
-            border-radius: var(--border-radius);
+        .card-header {
+            background: var(--card-bg-light);
+            border-top-left-radius: var(--radius);
+            border-top-right-radius: var(--radius);
+            padding: 18px 0 14px 0;
+            text-align: center;
+            font-size: 1.18rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-main);
         }
-
-        #output {
-            background: #2d2d2d;
+        .card-content {
+            flex: 1;
+            padding: 24px 24px 64px 24px;
+            display: flex;
+            flex-direction: column;
+            font-size: 1.07em;
+            line-height: 1.7;
+        }
+        .card-footer {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 24px 18px 24px;
+            gap: 12px;
+            background: transparent;
+        }
+        .card-footer .footer-left {
+            margin-right: auto;
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        .editor-actions button, .card-footer button {
+            background: var(--button-bg);
             color: #fff;
-            padding: 15px;
-            border-radius: var(--border-radius);
-            min-height: 200px;
-            font-family: 'Consolas', monospace;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 1em;
+            font-weight: 500;
+            margin-left: 8px;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(44,44,84,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .editor-actions button:hover, .card-footer button:hover {
+            background: var(--button-hover);
+        }
+        .editor-actions button:active, .card-footer button:active {
+            filter: brightness(0.93);
+        }
+        .editor-actions button[aria-label], .card-footer button[aria-label] {
+            position: relative;
+        }
+        .editor-actions button[aria-label]:hover::after, .card-footer button[aria-label]:hover::after {
+            content: attr(aria-label);
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #232345;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            white-space: nowrap;
+            opacity: 0.95;
+            pointer-events: none;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(44,44,84,0.18);
+        }
+        .editor-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .CodeMirror {
+            height: 340px;
+            background: var(--card-bg-light);
+            color: var(--text-main);
+            border-radius: 10px;
+            font-size: 1.05em;
+            border: none;
+        }
+        #output {
+            background: var(--card-bg-light);
+            color: var(--text-main);
+            border-radius: 10px;
+            min-height: 340px;
+            font-family: 'Fira Mono', 'SF Mono', 'Menlo', 'Monaco', monospace;
+            font-size: 1.05em;
+            padding: 18px;
+            margin-bottom: 0;
             white-space: pre-wrap;
             overflow-x: auto;
-        }
-
-        button {
-            padding: 10px 20px;
-            background: var(--gradient);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 16px;
-            margin: 10px 0;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .package-input {
-            display: flex;
-            gap: 10px;
-            margin: 10px 0;
-        }
-
-        .package-input input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            font-size: 14px;
-        }
-
-        .package-input input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        .package-list {
-            margin: 10px 0;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: var(--border-radius);
-            max-height: 150px;
-            overflow-y: auto;
-        }
-
-        .package-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px 10px;
-            background: white;
-            margin: 5px 0;
-            border-radius: var(--border-radius);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .package-item button {
-            padding: 5px 10px;
-            font-size: 12px;
-            margin: 0;
-        }
-
-        .title-container {
-            text-align: center;
-            margin-bottom: 30px;
             position: relative;
         }
-
-        .title-container h1 {
-            color: var(--text-color);
-            font-size: 2.5em;
-            margin: 0;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
+        .error-message {
+            background: rgba(255,77,109,0.12);
+            color: var(--error);
+            border-left: 4px solid var(--error);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-size: 1em;
         }
-
-        .title-container .subtitle {
-            color: #666;
-            font-size: 1.2em;
-            margin-top: 5px;
+        .success-message {
+            background: rgba(52,199,89,0.12);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-size: 1em;
         }
-
-        .title-container .author {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary-color);
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-
-        @media (max-width: 768px) {
-            .title-container .author {
-                position: static;
-                transform: none;
-                margin-top: 10px;
-            }
-        }
-
-        .ai-modal, .chat-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .ai-modal-content, .chat-modal-content {
-            background: var(--card-background);
-            border-radius: var(--border-radius);
-            padding: 30px 24px 24px 24px;
-            min-width: 400px;
-            max-width: 90vw;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
-            position: relative;
-        }
-
-        .close-modal {
+        .copy-btn {
             position: absolute;
             top: 12px;
-            right: 18px;
-            font-size: 22px;
-            color: #888;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .close-modal:hover {
-            color: var(--error-color);
-        }
-
-        .ai-response h3, .chat-modal-content h2 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .ai-response pre {
-            background: #2d2d2d;
-            color: #fff;
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin: 10px 0;
-            font-family: 'Consolas', monospace;
-            overflow-x: auto;
-        }
-
-        #aiChatBtn {
-            position: fixed;
-            bottom: 32px;
-            right: 32px;
-            z-index: 1100;
-            background: var(--primary-color);
+            right: 12px;
+            background: var(--button-bg);
             color: #fff;
             border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 0.98em;
             cursor: pointer;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: background 0.2s;
+            z-index: 2;
+            opacity: 0.85;
         }
-
-        #aiChatBtn:hover {
-            background: var(--secondary-color);
-            transform: scale(1.1);
-        }
-
-        .chat-history {
-            max-height: 400px;
-            overflow-y: auto;
-            margin-bottom: 15px;
-            background: #f8f9fa;
-            border-radius: var(--border-radius);
-            padding: 15px;
-        }
-
-        .chat-message {
-            margin-bottom: 12px;
-            padding: 10px;
-            border-radius: var(--border-radius);
-            max-width: 80%;
-        }
-
-        .chat-message.user {
-            background: var(--primary-color);
-            color: white;
-            margin-left: auto;
-        }
-
-        .chat-message.ai {
-            background: #f0f0f0;
-            color: var(--text-color);
-            margin-right: auto;
-        }
-
-        .chat-input-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        #chatInput {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-        }
-
-        #chatInput:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        .chat-form button {
-            background: var(--primary-color);
-            padding: 12px 24px;
-        }
-
+        .copy-btn:hover { background: var(--button-hover); opacity: 1; }
         .loading {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,255,255,0.18);
             border-radius: 50%;
-            border-top: 3px solid var(--primary-color);
+            border-top: 3px solid var(--button-bg);
             animation: spin 1s linear infinite;
         }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        h1 {
-            color: var(--text-color);
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                gap: 0;
+                align-items: stretch;
+            }
+            .card {
+                max-width: 100vw;
+                min-width: 0;
+            }
         }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+        @media (max-width: 600px) {
+            .logo {
+                margin: 24px 0 12px 0;
+            }
+            .container {
+                padding: 0 0px;
+            }
+            .card {
+                min-width: 0;
+                margin-bottom: 18px;
+                min-height: 340px;
+            }
+            .card-content {
+                padding: 16px 8px 56px 8px;
+            }
+            .card-footer {
+                padding: 0 8px 12px 8px;
+            }
+            .card-header {
+                font-size: 1em;
+                padding: 12px 0 10px 0;
+            }
+            #aiChatBtn { width: 60px; height: 60px; font-size: 26px; }
         }
-
-        .header h2 {
-            margin: 0;
-            color: var(--text-color);
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .tab {
-            padding: 10px 20px;
-            background: #f0f0f0;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .tab.active {
-            background: var(--gradient);
-            color: white;
-        }
-
-        .tab-content {
+        .ai-modal, .chat-modal {
             display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            background: rgba(44,44,84,0.7);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(6px);
+            transition: opacity 0.3s;
         }
-
-        .tab-content.active {
-            display: block;
+        .ai-modal.active, .chat-modal.active { opacity: 1; display: flex; }
+        .ai-modal-content, .chat-modal-content {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 32px 24px 24px 24px;
+            min-width: 340px;
+            max-width: 95vw;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(44,44,84,0.3);
+            position: relative;
+            color: #fff;
+        }
+        .close-modal {
+            position: absolute;
+            top: 16px; right: 16px;
+            font-size: 24px;
+            color: #b3b3d1;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s, color 0.2s;
+        }
+        .close-modal:hover { background: rgba(255,255,255,0.08); color: var(--error); }
+        .error-analysis { background: var(--card-bg-light); border-radius: 12px; padding: 18px; margin: 18px 0; }
+        .error-section { margin-bottom: 18px; }
+        .error-section:last-child { margin-bottom: 0; }
+        .error-section h4 { margin-bottom: 10px; }
+        #aiFixedCode { background: #18183a; color: #fff; border-radius: 8px; padding: 16px; font-family: 'Fira Mono', 'SF Mono', 'Menlo', 'Monaco', monospace; font-size: 1em; }
+        .chat-history { max-height: 320px; overflow-y: auto; margin-bottom: 15px; background: var(--card-bg-light); border-radius: 10px; padding: 15px; }
+        .chat-message { margin-bottom: 12px; padding: 10px; border-radius: 8px; max-width: 80%; }
+        .chat-message.user { background: var(--button-bg); color: #fff; margin-left: auto; }
+        .chat-message.ai { background: var(--card-bg); color: #fff; margin-right: auto; }
+        @media (max-width: 600px) {
+            .ai-modal-content, .chat-modal-content { min-width: 90vw; padding: 16px 6px 16px 6px; }
+            #aiChatBtn { bottom: 16px; right: 16px; width: 48px; height: 48px; font-size: 20px; }
+        }
+        @keyframes logoFadeIn {
+            from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
     </style>
 </head>
 <body>
-    <div class="title-container">
-        <h1>Python Web Compiler</h1>
-        <div class="subtitle">Write, Run, and Debug Python Code Online</div>
-        <div class="author">by Shashwat</div>
+    <div class="logo">
+        <!-- Simple SVG logo: Pythonic P in a circle -->
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="24" fill="#fff"/>
+            <path d="M16 34V14h10.5c4.5 0 7.5 2.2 7.5 6.1 0 3.2-2.2 5.1-5.2 5.6v.2c3.5.4 5.7 2.3 5.7 5.7 0 4.2-3.3 6.4-8.2 6.4H16zm6.7-13.2h-4.2v5.1h4.2c2.2 0 3.5-.8 3.5-2.5 0-1.7-1.3-2.6-3.5-2.6zm.3 7.2h-4.5v5.6h4.5c2.7 0 4.1-.9 4.1-2.8 0-1.8-1.4-2.8-4.1-2.8z" fill="#6C63FF"/>
+        </svg>
+        <span class="logo-text">PyWeb</span>
     </div>
-
+    <div class="logo-tagline">AI-powered Python playground</div>
     <div class="container">
-        <div class="editor-container">
-            <div class="header">
-                <h2>Code Editor</h2>
-                <div class="button-group">
-                    <button onclick="executeCode()">
-                        <i class="fas fa-play"></i> Run Code
-                    </button>
-                    <button id="getFixBtn" onclick="openAIModal()">
-                        <i class="fas fa-magic"></i> Get Fix
-                    </button>
-                </div>
-            </div>
-            <div class="tabs">
-                <div class="tab active" onclick="switchTab('code')">Code</div>
-                <div class="tab" onclick="switchTab('packages')">Packages</div>
-            </div>
-            <div class="tab-content active" id="code-tab">
+        <div class="card">
+            <div class="card-header">Script</div>
+            <div class="card-content">
                 <textarea id="code">print("Hello, World!")</textarea>
+                <div class="editor-actions">
+                    <button onclick="executeCode()"><i class="fas fa-play"></i> Run</button>
+                    <button id="getFixBtn" onclick="openAIModal()" style="display: none;"><i class="fas fa-magic"></i> Fix</button>
+                </div>
             </div>
-            <div class="tab-content" id="packages-tab">
-                <div class="package-input">
-                    <input type="text" id="packageInput" placeholder="Enter package name (e.g., numpy)" />
-                    <button onclick="installPackage()">
-                        <i class="fas fa-download"></i> Install
-                    </button>
-                </div>
-                <div class="package-list" id="packageList">
-                    <!-- Packages will be listed here -->
-                </div>
+            <div class="card-footer">
+                <span class="footer-left"></span>
+                <button onclick="editor.setValue('');"><i class="fas fa-eraser"></i> Clear</button>
             </div>
         </div>
-        <div class="output-container">
-            <div class="header">
-                <h2>Output</h2>
+        <div class="card">
+            <div class="card-header">Output</div>
+            <div class="card-content">
+                <div id="output"></div>
             </div>
-            <div id="output"></div>
+            <div class="card-footer">
+                <span class="footer-left">2024 &copy; Shashwat</span>
+            </div>
         </div>
     </div>
-
     <!-- AI Error Fix Modal -->
     <div id="aiModal" class="ai-modal">
         <div class="ai-modal-content">
             <span class="close-modal" onclick="closeAIModal()">&times;</span>
-            <h3><i class="fas fa-robot"></i> AI Explanation</h3>
-            <div id="aiExplanation"></div>
-            <h3><i class="fas fa-code"></i> Suggested Fix</h3>
-            <pre id="aiFixedCode"></pre>
-            <button onclick="applyFix()">
-                <i class="fas fa-check"></i> Apply Fix
-            </button>
+            <h3 style="color:#fff;"><i class="fas fa-exclamation-circle"></i> Error Analysis</h3>
+            <div class="error-analysis">
+                <div class="error-section">
+                    <h4 style="color:#fff;"><i class="fas fa-info-circle"></i> What's Wrong?</h4>
+                    <div id="aiExplanation" class="error-message"></div>
+                </div>
+                <div class="error-section">
+                    <h4 style="color:#fff;"><i class="fas fa-code"></i> Suggested Fix</h4>
+                    <pre id="aiFixedCode"></pre>
+                </div>
+            </div>
+            <button onclick="applyFix()" style="background:var(--button-bg);color:#fff;"><i class="fas fa-check"></i> Apply Fix</button>
         </div>
     </div>
-
     <!-- AI Chat Floating Button -->
-    <button id="aiChatBtn" title="AI Chat">
+    <button id="aiChatBtn" title="AI Chat" style="position:fixed;bottom:32px;right:32px;z-index:1100;background:var(--button-bg);color:#fff;border:none;border-radius:50%;width:60px;height:60px;font-size:24px;box-shadow:0 4px 16px rgba(44,44,84,0.2), 0 0 0 0 rgba(108,99,255,0.18);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:box-shadow 0.2s, transform 0.2s;">
         <i class="fas fa-comments"></i>
     </button>
-
     <!-- AI Chat Modal -->
     <div id="chatModal" class="chat-modal">
         <div class="chat-modal-content">
             <span class="close-modal" onclick="closeChatModal()">&times;</span>
-            <h2><i class="fas fa-robot"></i> AI Chat Assistant</h2>
-            <div class="chat-history" id="chatHistory"></div>
+            <h2 style="color:#fff;"><i class="fas fa-robot"></i> AI Chat Assistant</h2>
+            <div class="chat-history" id="chatHistory" style="background:var(--card-bg-light);color:#fff;"></div>
             <form id="chatForm" class="chat-form" onsubmit="sendChat(event)">
-                <div class="chat-input-container">
-                    <input type="text" id="chatInput" placeholder="Ask me anything about Python..." required />
-                    <button type="submit">
-                        <i class="fas fa-paper-plane"></i> Send
-                    </button>
+                <div class="chat-input-container" style="display:flex;gap:10px;margin-top:15px;">
+                    <input type="text" id="chatInput" placeholder="Ask me anything about Python..." required style="flex:1;padding:12px;border-radius:8px;border:none;font-size:15px;background:var(--card-bg);color:#fff;" />
+                    <button type="submit" style="background:var(--button-bg);color:#fff;padding:12px 20px;border-radius:8px;border:none;font-size:15px;cursor:pointer;"><i class="fas fa-paper-plane"></i> Send</button>
                 </div>
             </form>
         </div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
     <script>
@@ -512,6 +446,7 @@
                     getFixBtn.style.display = 'inline-flex';
                 }
                 outputDiv.innerHTML = output || 'No output';
+                setTimeout(addCopyButton, 400);
             })
             .catch(error => {
                 outputDiv.innerHTML = 'Error: ' + error.message;
@@ -521,7 +456,10 @@
         // AI Error Fix Modal Logic
         function openAIModal() {
             if (!lastError) return;
-            document.getElementById('aiModal').style.display = 'flex';
+            const modal = document.getElementById('aiModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+            
             document.getElementById('aiExplanation').innerHTML = '<div class="loading"></div> Analyzing error...';
             document.getElementById('aiFixedCode').innerHTML = '';
             
@@ -541,8 +479,13 @@
                     document.getElementById('aiExplanation').innerHTML = 'Error: ' + data.error;
                     return;
                 }
-                document.getElementById('aiExplanation').innerHTML = data.explanation;
-                // Format the code with proper syntax highlighting
+                // Format the reason with proper line breaks and styling
+                const formattedReason = data.reason
+                    .split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line)
+                    .join('<br>');
+                document.getElementById('aiExplanation').innerHTML = formattedReason;
                 const formattedCode = data.fixed_code.replace(/```python\n?|\n?```/g, '');
                 document.getElementById('aiFixedCode').innerHTML = formattedCode;
             })
@@ -552,7 +495,9 @@
         }
 
         function closeAIModal() {
-            document.getElementById('aiModal').style.display = 'none';
+            const modal = document.getElementById('aiModal');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
         }
 
         function applyFix() {
@@ -572,11 +517,13 @@
 
         aiChatBtn.onclick = function() {
             chatModal.style.display = 'flex';
+            setTimeout(() => chatModal.classList.add('active'), 10);
             chatInput.focus();
         };
 
         function closeChatModal() {
-            chatModal.style.display = 'none';
+            chatModal.classList.remove('active');
+            setTimeout(() => chatModal.style.display = 'none', 300);
         }
 
         function appendChatMessage(sender, text) {
@@ -643,93 +590,29 @@
             }
         });
 
-        // Add new functions for package management
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-        }
-
-        function installPackage() {
-            const packageName = document.getElementById('packageInput').value.trim();
-            if (!packageName) return;
-
+        function addCopyButton() {
             const outputDiv = document.getElementById('output');
-            outputDiv.innerHTML = `<div class="loading"></div> Installing ${packageName}...`;
-
-            fetch('/install_package', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ package: packageName })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    outputDiv.innerHTML = `Error installing ${packageName}: ${data.error}`;
-                } else {
-                    outputDiv.innerHTML = `Successfully installed ${packageName}`;
-                    updatePackageList();
-                }
-            })
-            .catch(error => {
-                outputDiv.innerHTML = `Error: ${error.message}`;
-            });
-
-            document.getElementById('packageInput').value = '';
+            if (!document.getElementById('copyOutputBtn')) {
+                const btn = document.createElement('button');
+                btn.className = 'copy-btn';
+                btn.id = 'copyOutputBtn';
+                btn.innerText = 'Copy Output';
+                btn.onclick = function() {
+                    const text = outputDiv.innerText;
+                    navigator.clipboard.writeText(text);
+                    btn.innerText = 'Copied!';
+                    setTimeout(()=>{btn.innerText='Copy Output';}, 1200);
+                };
+                outputDiv.parentElement.appendChild(btn);
+            }
         }
 
-        function updatePackageList() {
-            fetch('/list_packages')
-            .then(response => response.json())
-            .then(data => {
-                const packageList = document.getElementById('packageList');
-                packageList.innerHTML = data.packages.map(pkg => `
-                    <div class="package-item">
-                        <span>${pkg}</span>
-                        <button onclick="uninstallPackage('${pkg}')">
-                            <i class="fas fa-trash"></i> Remove
-                        </button>
-                    </div>
-                `).join('');
-            })
-            .catch(error => {
-                console.error('Error fetching packages:', error);
-            });
-        }
-
-        function uninstallPackage(packageName) {
-            if (!confirm(`Are you sure you want to uninstall ${packageName}?`)) return;
-
-            const outputDiv = document.getElementById('output');
-            outputDiv.innerHTML = `<div class="loading"></div> Uninstalling ${packageName}...`;
-
-            fetch('/uninstall_package', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ package: packageName })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    outputDiv.innerHTML = `Error uninstalling ${packageName}: ${data.error}`;
-                } else {
-                    outputDiv.innerHTML = `Successfully uninstalled ${packageName}`;
-                    updatePackageList();
-                }
-            })
-            .catch(error => {
-                outputDiv.innerHTML = `Error: ${error.message}`;
-            });
-        }
-
-        // Initialize package list on page load
-        document.addEventListener('DOMContentLoaded', updatePackageList);
+        // Add tooltips to main action buttons
+        window.addEventListener('DOMContentLoaded', ()=>{
+            document.querySelector('button[onclick*="executeCode"]').setAttribute('aria-label','Run your code');
+            document.getElementById('getFixBtn').setAttribute('aria-label','AI Fix for errors');
+            document.querySelector('button[onclick*="editor.setValue"]').setAttribute('aria-label','Clear the editor');
+        });
     </script>
 </body>
 </html>
